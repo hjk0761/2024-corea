@@ -30,4 +30,8 @@ public class MatchResult {
     private String prLink;
 
     private boolean isReviewed;
+
+    public MatchResult(long roomId, Member fromMember, Member toMember, String prLink) {
+        this(null, roomId, fromMember, toMember, prLink, false);
+    }
 }

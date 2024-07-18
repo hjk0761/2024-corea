@@ -1,35 +1,32 @@
 package corea.member.service;
 
+import corea.matching.domain.MatchResult;
 import corea.matching.domain.Participation;
-import corea.matching.service.Matching;
-import corea.member.entity.MatchedGroup;
-import corea.matching.repository.MatchedGroupRepository;
-import lombok.AllArgsConstructor;
+import corea.matching.domain.PlainRandomMatching;
+import corea.matching.repository.MatchResultRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MatchingService {
 
-    private final MatchedGroupRepository matchedGroupRepository;
-    private final Matching matching;
+    private final PlainRandomMatching plainRandomMatching;
+    private final MatchResultRepository matchResultRepository;
 
-    public void matchMaking(final List<Participation> participations, final int matchingSize) {
-        final ArrayList<Long> memberIds = new ArrayList<>(participations.stream()
+    public void matchMaking(List<Participation> participations, int matchingSize) {
+        List<Long> memberIds = participations.stream()
                 .map(Participation::getMemberId)
-                .toList()
-        );
+                .toList();
 
-        final Map<Long, List<Long>> results = matching.matchGroup(memberIds, matchingSize);
+        Map<Long, Long> results = plainRandomMatching.matchPairs(memberIds, matchingSize);
+
         results.entrySet()
                 .stream()
-                .flatMap(entry -> entry.getValue()
-                        .stream()
-                        .map(memberId -> new MatchedGroup(entry.getKey(), memberId)))
-                .forEach(matchedGroupRepository::save);
+                .map(entry -> new MatchResult(entry.getKey(), entry.getValue(), ))
+                .forEach(matchResultRepository::save);
     }
 }
