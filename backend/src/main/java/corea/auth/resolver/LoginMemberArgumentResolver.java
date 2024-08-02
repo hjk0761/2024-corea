@@ -34,7 +34,10 @@ public class LoginMemberArgumentResolver implements HandlerMethodArgumentResolve
     public AuthInfo resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
                                     NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String accessToken = requestHandler.extractToken(request);
+        String accessToken = requestHandler.extract(request);
+        if (accessToken.equals("ANONYMOUS")) {
+            throw new CoreaException(ExceptionType.AUTHORIZATION_ERROR);
+        }
         Long memberId = tokenGenerator.getPayload(accessToken).get("id", Long.class);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CoreaException(ExceptionType.AUTHORIZATION_ERROR));
