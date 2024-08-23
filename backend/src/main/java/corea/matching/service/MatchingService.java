@@ -38,7 +38,6 @@ public class MatchingService {
 
         List<Participation> participations = getParticipationsWithPullrequestSubmitted(pullRequestInfo, roomId);
 //        room.close();
-
         log.info("매칭 시작 [방 번호 ({}), 매칭하는 인원 ({}), 총 인원({})]", roomId, room.getMatchingSize(), participations.size());
 
         return matchResultRepository.saveAll(matchingStrategy.matchPairs(participations, room.getMatchingSize())
