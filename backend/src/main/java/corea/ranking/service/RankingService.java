@@ -31,7 +31,7 @@ public class RankingService {
     private final ProfileRepository profileRepository;
 
     public RankingResponses findTopRankings() {
-        LocalDate date = LocalDate.now();
+        LocalDate date = LocalDate.of(2024, 8, 22);
         Map<String, List<RankingResponse>> topRankings = Arrays.stream(EvaluateClassification.values())
                 .collect(toMap(EvaluateClassification::getExpression, classification -> findTop3Rankings(classification, date)));
 

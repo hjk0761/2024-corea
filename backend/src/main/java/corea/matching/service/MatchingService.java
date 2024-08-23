@@ -37,19 +37,20 @@ public class MatchingService {
                 .orElseThrow(() -> new CoreaException(ExceptionType.ROOM_NOT_FOUND));
 
         List<Participation> participations = getParticipationsWithPullrequestSubmitted(pullRequestInfo, roomId);
+        room.close();
 
         log.info("매칭 시작 [방 번호 ({}), 매칭하는 인원 ({}), 총 인원({})]", roomId, room.getMatchingSize(), participations.size());
 
         return matchResultRepository.saveAll(matchingStrategy.matchPairs(participations, room.getMatchingSize())
                 .stream()
-                .map(pair -> MatchResult.of(roomId, pair, pullRequestInfo.getPullrequestLinkWithGithubMemberId(pair.getReceiverGithubId())))
+                .map(pair -> MatchResult.of(roomId, pair, ""))
                 .toList());
     }
 
     private List<Participation> getParticipationsWithPullrequestSubmitted(PullRequestInfo pullRequestInfo, long roomId) {
         return participationRepository.findAllByRoomId(roomId)
                 .stream()
-                .filter(participation -> pullRequestInfo.containsGithubMemberId(participation.getMemberGithubId()))
+//                .filter(participation -> pullRequestInfo.containsGithubMemberId(participation.getMemberGithubId()))
                 .toList();
     }
 }

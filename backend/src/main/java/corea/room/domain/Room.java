@@ -84,6 +84,10 @@ public class Room {
         return status.isClosed();
     }
 
+    public void close() {
+        this.status = RoomStatus.CLOSED;
+    }
+
     public String getManagerName() {
         return manager.getName();
     }
